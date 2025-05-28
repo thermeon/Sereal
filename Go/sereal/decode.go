@@ -790,6 +790,7 @@ func (d *Decoder) decodeViaReflection(by []byte, idx int, ptr reflect.Value) (in
 		if val, idx, err = d.decodeBinary(by, idx+sz, ln, false); err != nil {
 			return 0, err
 		}
+		ptr = ensurePtrInstantiated(ptr)
 		ptr.SetString(string(val))
 
 	case tag == typeHASH:
@@ -884,6 +885,18 @@ func (d *Decoder) decodeViaReflection(by []byte, idx int, ptr reflect.Value) (in
 	}
 
 	return idx, err
+}
+
+// ensurePtrInstantiated populates a pointer kind with a new element of it's underlying type and
+// returns a dereferenced ptr.
+func ensurePtrInstantiated(ptr reflect.Value) reflect.Value {
+	if ptr.Kind() == reflect.Ptr {
+		if ptr.IsNil() {
+			ptr.Set(reflect.New(ptr.Type().Elem()))
+		}
+		ptr = ptr.Elem()
+	}
+	return ptr
 }
 
 func (d *Decoder) decodeArrayViaReflection(by []byte, idx int, ln int, ptr reflect.Value) (int, error) {
