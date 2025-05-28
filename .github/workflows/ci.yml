@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         go:
-          - '1.16'
+          - '1.20'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -58,6 +58,7 @@ jobs:
         run: cd ruby && rake clean && rake && rake test
 
   java:
+    if: false # THERMEON: We aren't interested in this version
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -87,6 +88,7 @@ jobs:
         run: ./travis/java.sh
 
   perl:
+    if: false # THERMEON: We aren't interested in this version
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
